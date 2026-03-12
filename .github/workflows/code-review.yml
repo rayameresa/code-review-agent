@@ -49,7 +49,6 @@ jobs:
           script: |
             const fs = require('fs');
             let body = fs.readFileSync('review_output.md', 'utf8');
-            // Truncate if over GitHub limit (~65535 chars for comment body)
             if (body.length > 60000) {
               body = body.substring(0, 60000) + '\n\n... _(review truncated)_';
             }
