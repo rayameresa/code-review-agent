@@ -36,10 +36,15 @@ def heuristic_review(diff: str) -> str:
         (r"^\s*#\s*type:\s*ignore", "Type ignore - consider fixing the underlying issue"),
     ]
 
+    # Don't flag the review agent's own script (it contains pattern strings as data)
+    skip_paths = ("scripts/code-review-agent.py", "code-review-agent.py")
+
     for i, line in enumerate(lines):
         if line.startswith("+++ b/"):
             current_file = line[6:].strip()
         if line.startswith("+") and not line.startswith("+++"):
+            if current_file and any(skip in current_file for skip in skip_paths):
+                continue
             code = line[1:]
             for pattern, message in patterns:
                 if re.search(pattern, code, re.IGNORECASE):
